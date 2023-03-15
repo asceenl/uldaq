@@ -11,6 +11,7 @@
 #include <cstring>
 #include <iostream>
 #include <sys/time.h>
+#include <time.h>
 
 #include "uldaq.h"
 
