@@ -57,30 +57,6 @@ UlError ulGetDaqDeviceInventory(DaqDeviceInterface interfaceTypes, DaqDeviceDesc
 	return err;
 }
 
-UlError ulGetNetDaqDeviceDescriptor(const char* host, unsigned short port, const char* ifcName, DaqDeviceDescriptor* daqDevDescriptor, double timeout)
-{
-	UL_LOG("ulGetNetDaqDeviceDescriptor() <----");
-
-	UlError error = ERR_NO_ERROR;
-
-	try
-	{
-		*daqDevDescriptor = UlDaqDeviceManager::getNetDaqDeviceDescriptor(host, port, ifcName, timeout);
-	}
-	catch(UlException& e)
-	{
-		error = e.getError();
-	}
-	catch(...)
-	{
-		error = ERR_UNHANDLED_EXCEPTION;
-	}
-
-	UL_LOG("ulGetNetDaqDeviceDescriptor() ---->");
-
-	return error;
-}
-
 // coverity[pass_by_value]
 DaqDeviceHandle ulCreateDaqDevice(DaqDeviceDescriptor daqDevDescriptor)
 {
@@ -2860,10 +2836,6 @@ UlError ulDevGetConfigStr(DaqDeviceHandle daqDeviceHandle, DevConfigItemStr conf
 			case DEV_CFG_IP_ADDR_STR:
 				devConfig.getIpAddressStr(configStr, maxConfigLen);
 				break;
-			case DEV_CFG_NET_IFC_STR:
-				devConfig.getNetIfcNameStr(configStr, maxConfigLen);
-				break;
-
 			default:
 				error = ERR_BAD_CONFIG_ITEM;
 			}

@@ -39,15 +39,6 @@
 #include "./usb/Usb1608hs.h"
 #include "./usb/UsbTc32.h"
 
-#include "./net/NetDiscovery.h"
-#include "./net/NetDaqDevice.h"
-#include "./net/E1608.h"
-#include "./net/EDio24.h"
-#include "./net/ETc.h"
-#include "./net/ETc32.h"
-
-#include "./net/E1808.h"
-
 #include <iostream>
 #include <cstring>
 #include <vector>
@@ -116,41 +107,10 @@ std::vector<DaqDeviceDescriptor> UlDaqDeviceManager::getDaqDeviceInventory(DaqDe
 			daqDeviceList.push_back(hidDaqDeviceList[i]);
 	}
 
-	if(InterfaceType & ETHERNET_IFC)
-	{
-		std::vector<DaqDeviceDescriptor> netDaqDeviceList = NetDiscovery::findDaqDevices();
-
-		for(unsigned int i = 0; i < netDaqDeviceList.size(); i++)
-			daqDeviceList.push_back(netDaqDeviceList[i]);
-	}
 
 	return daqDeviceList;
 }
 
-DaqDeviceDescriptor UlDaqDeviceManager::getNetDaqDeviceDescriptor(const char* host, unsigned short port, const char* ifcName, double timeout)
-{
-	init();
-
-	DaqDeviceDescriptor descriptor;
-
-	std::string hostStr = "";
-	std::string ifcNameStr = "";
-
-	if(host != NULL)
-		hostStr = host;
-
-	if(ifcName != NULL)
-		ifcNameStr = ifcName;
-
-	if(timeout == 0.0)
-		timeout = 0.001; // 1ms
-
-	int to = timeout > 0.0 ? (int)(timeout * 1000) : -1;
-
-	descriptor = NetDiscovery::findDaqDevice(hostStr, port, ifcNameStr, to);
-
-	return descriptor;
-}
 
 UlDaqDevice& UlDaqDeviceManager::createDaqDevice(const DaqDeviceDescriptor& daqDevDescriptor)
 {
@@ -301,30 +261,7 @@ UlDaqDevice& UlDaqDeviceManager::createDaqDevice(const DaqDeviceDescriptor& daqD
 		break;
 
 
-		case DaqDeviceId::E_1608:
-			daqDev = new E1608(daqDevDescriptor);
-		break;
-
-		case DaqDeviceId::E_DIO24:
-			daqDev = new EDio24(daqDevDescriptor);
-		break;
-
-		case DaqDeviceId::E_TC:
-			daqDev = new ETc(daqDevDescriptor);
-		break;
-
-		case DaqDeviceId::E_TC_32:
-			daqDev = new ETc32(daqDevDescriptor);
-		break;
-
-		// virtual Net devices
-
-		case DaqDeviceId::E_1808:
-		case DaqDeviceId::E_1808X:
-			daqDev = new E1808(daqDevDescriptor);
-		break;
 		}
-
 
 
 		if(daqDev)

@@ -25,7 +25,6 @@ public:
 	static UlError init();
 
 	static std::vector<DaqDeviceDescriptor> getDaqDeviceInventory(DaqDeviceInterface InterfaceType);
-	static DaqDeviceDescriptor getNetDaqDeviceDescriptor(const char* host, unsigned short port, const char* ifcName, double timeout);
 	static UlDaqDevice& createDaqDevice(const DaqDeviceDescriptor& daqDevDescriptor);
 	static void releaseDaqDevice(UlDaqDevice& daqDevice);
 };
