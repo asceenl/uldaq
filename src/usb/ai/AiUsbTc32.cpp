@@ -521,7 +521,11 @@ void AiUsbTc32::getCfg_ExpCalDateStr(int calTableIndex, char* calDate, unsigned 
 {
 	mDaqDevice.checkConnection();
 
+	#ifndef __MINGW64__
 	long int calDateSec = getCfg_ExpCalDate(calTableIndex);
+	#else
+	long long int calDateSec = getCfg_ExpCalDate(calTableIndex);
+	#endif
 
 	// convert seconds to string
 	struct tm *timeinfo;

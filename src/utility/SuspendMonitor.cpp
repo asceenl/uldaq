@@ -6,7 +6,9 @@
 
 #include <unistd.h>
 #include <stdint.h>
+#ifndef __MINGW64__
 #include <sys/resource.h>
+#endif
 
 #include "SuspendMonitor.h"
 #include "FnLog.h"
@@ -62,8 +64,10 @@ void* SuspendMonitor::suspendDetectionThread(void *arg)
 
 	SuspendMonitor* This = (SuspendMonitor*) arg;
 
+	#ifndef __MINGW64__
 	int niceVal = 10;  // make sure this thread does not get a high priority if the parent thread is running with high priority
 	setpriority(PRIO_PROCESS, 0, niceVal);
+	#endif
 
 	unsigned long long currentTime;
 	const unsigned int MAX_TIME = 1000; //ms

@@ -4,8 +4,10 @@
  *     Author: Measurement Computing Corporation
  */
 
+#ifndef __MINGW64__
 #include <sys/resource.h>
 #include <sys/syscall.h>
+#endif
 #include <unistd.h>
 
 #include "UsbDaqDevice.h"
@@ -906,10 +908,13 @@ void UsbDaqDevice::setUsbEventHandlerThreadPriority( int niceValue)
 #ifndef __APPLE__
 	if(niceValue >= -20 && niceValue <=0)  // don't allow nice values 1 to 19, it may cause overrun or underrun errors
 	{
-		if(mUsbEventThreadStarted)
+		if(mUsbEventThreadStarted) {
+			#ifndef __MINGW64__
 			setpriority(PRIO_PROCESS, mUsbEventHandlerThreadId, niceValue);
-		else
+			#endif
+		} else {
 			mUsbEventHandlerThreadNiceValue = niceValue;
+		}
 	}
 	else
 		throw UlException(ERR_BAD_CONFIG_VAL);
@@ -918,11 +923,15 @@ void UsbDaqDevice::setUsbEventHandlerThreadPriority( int niceValue)
 
 int UsbDaqDevice::getUsbEventHandlerThreadPriority()
 {
-#ifndef __APPLE__
+#if !defined(__APPLE__) && !defined(__MINGW64__)
 	if(mUsbEventThreadStarted)
 	{
+		#ifndef __MINGW64__
 		int niceValue = getpriority(PRIO_PROCESS, mUsbEventHandlerThreadId);
 		return niceValue;
+		#else
+		return 0;
+		#endif
 	}
 	else
 #endif
@@ -933,7 +942,7 @@ void* UsbDaqDevice::eventHandlerThread(void *arg)
 {
 	UL_LOG("USB Event handler started");
 
-#ifndef __APPLE__
+#if !defined(__APPLE__) && !defined(__MINGW64__)
 	mUsbEventHandlerThreadId = syscall(SYS_gettid); // note: syscall is deprecated in osx use pthread_threadid_np if this feature is needed
 
 	if(mUsbEventHandlerThreadNiceValue != 0)

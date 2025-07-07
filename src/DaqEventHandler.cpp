@@ -5,7 +5,9 @@
  */
 
 #include "DaqEventHandler.h"
+#ifndef __MINGW64__
 #include <sys/resource.h>
+#endif
 
 #include "./utility/UlLock.h"
 
@@ -227,8 +229,10 @@ void* DaqEventHandler::eventThread(void *arg)
 {
 	DaqEventHandler* This = (DaqEventHandler*) arg;
 
+	#ifndef __MINGW64__
 	int niceVal = 0;  // make sure this thread does not get a high priority if the parent thread is running with high priority
 	setpriority(PRIO_PROCESS, 0, niceVal);
+	#endif
 
 	This->mEventThreadInitEvent.signal();
 

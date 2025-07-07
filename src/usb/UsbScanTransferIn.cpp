@@ -5,8 +5,10 @@
  */
 #include <cstring>
 #include <unistd.h>
+#ifndef __MINGW64__
 #include <sys/resource.h>
 #include <sys/syscall.h>
+#endif
 
 
 #include "UsbScanTransferIn.h"
@@ -289,8 +291,10 @@ void* UsbScanTransferIn::xferStateThread(void *arg)
 	int count = 0;
 	unsigned long long timeout = 250000;  // first timeout
 
+	#ifndef __MINGW64__
 	int niceVal = 0;  // make sure this thread does not get a high priority if the parent thread is running with high priority
 	setpriority(PRIO_PROCESS, 0, niceVal);
+	#endif
 
 	This->mStateThreadInitEvent.signal();
 

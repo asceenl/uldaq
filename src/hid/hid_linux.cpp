@@ -41,8 +41,10 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifndef __MINGW64__
 #include <sys/ioctl.h>
 #include <sys/utsname.h>
+#endif
 #include <fcntl.h>
 #include <pthread.h>
 #include <wchar.h>

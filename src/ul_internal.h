@@ -55,8 +55,13 @@ static inline char *time_now()
 	    timeval now;
 	    gettimeofday(&now, NULL);
 	    int micro_sec = now.tv_usec;
-
+#ifdef __MINGW64__
+		long long int ts;
+	    timeinfo = localtime(&ts);
+		now.tv_sec = ts;
+		#else
 	    timeinfo = localtime(&now.tv_sec);
+		#endif
 
 	    strftime(buffer, buffer_size, "%Y-%b-%d %H:%M:%S", timeinfo);
 
